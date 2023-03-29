@@ -61,7 +61,7 @@
 				
 				<option value="file2">github.com/AgentNemo00/myhttp/http/checksum.go (85.7%)</option>
 				
-				<option value="file3">github.com/AgentNemo00/myhttp/pool/pool.go (0.0%)</option>
+				<option value="file3">github.com/AgentNemo00/myhttp/pool/pool.go (100.0%)</option>
 				
 				<option value="file4">github.com/AgentNemo00/myhttp/pool/workers.go (100.0%)</option>
 				
@@ -219,7 +219,7 @@ type Pool struct {
         errors  map[string]error
 }
 
-func NewPool(parallel int) *Pool <span class="cov0" title="0">{
+func NewPool(parallel int) *Pool <span class="cov1" title="1">{
         return &amp;Pool{
                 amount:  parallel,
                 workers: make([]Worker, 0),
@@ -227,43 +227,43 @@ func NewPool(parallel int) *Pool <span class="cov0" title="0">{
         }
 }</span>
 
-func (p *Pool) AddWorker(worker Worker) <span class="cov0" title="0">{
+func (p *Pool) AddWorker(worker Worker) <span class="cov1" title="1">{
         p.workers = append(p.workers, worker)
 }</span>
 
 // Do - triggers the work process
-func (p *Pool) Do() map[string]checksum.Checksum <span class="cov0" title="0">{
+func (p *Pool) Do() map[string]checksum.Checksum <span class="cov6" title="3">{
         results := make(chan result, len(p.workers))
         jobs := make(chan Worker, len(p.workers))
         // initiate parallel working process
-        for i := 0; i &lt; p.amount; i++ </span><span class="cov0" title="0">{
+        for i := 0; i &lt; p.amount; i++ </span><span class="cov9" title="6">{
                 go p.worker(jobs, results)
         }</span>
         // send jobs
-        <span class="cov0" title="0">for _, worker := range p.workers </span><span class="cov0" title="0">{
+        <span class="cov6" title="3">for _, worker := range p.workers </span><span class="cov8" title="5">{
                 jobs &lt;- worker
         }</span>
-        <span class="cov0" title="0">close(jobs)
+        <span class="cov6" title="3">close(jobs)
         // fetch results
         ret := make(map[string]checksum.Checksum)
-        for i := 0; i &lt; len(p.workers); i++ </span><span class="cov0" title="0">{
+        for i := 0; i &lt; len(p.workers); i++ </span><span class="cov8" title="5">{
                 workerResult := &lt;-results
-                if workerResult.Error != nil </span><span class="cov0" title="0">{
+                if workerResult.Error != nil </span><span class="cov4" title="2">{
                         p.errors[workerResult.Name] = workerResult.Error
                         continue</span>
                 }
-                <span class="cov0" title="0">ret[workerResult.Name] = workerResult.Checksum</span>
+                <span class="cov6" title="3">ret[workerResult.Name] = workerResult.Checksum</span>
         }
-        <span class="cov0" title="0">return ret</span>
+        <span class="cov6" title="3">return ret</span>
 }
 
-func (p *Pool) worker(jobs &lt;-chan Worker, results chan&lt;- result) <span class="cov0" title="0">{
-        for job := range jobs </span><span class="cov0" title="0">{
+func (p *Pool) worker(jobs &lt;-chan Worker, results chan&lt;- result) <span class="cov10" title="7">{
+        for job := range jobs </span><span class="cov9" title="6">{
                 results &lt;- job()
         }</span>
 }
 
-func (p *Pool) Errors() map[string]error <span class="cov0" title="0">{
+func (p *Pool) Errors() map[string]error <span class="cov1" title="1">{
         return p.errors
 }</span>
 </pre>
